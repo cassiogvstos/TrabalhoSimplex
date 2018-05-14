@@ -1,0 +1,39 @@
+<% if @matriz[-1][-1][-1] == nil %>
+    <div class="alert alert-danger divisor">
+        <p><strong>Não foi possível realizar o cálculo.</strong></p>
+        <p>&nbsp;</p>
+        <p>Retorno: loop infinito.</p>
+    </div>
+<% else %>
+    <% @matriz.each_with_index do |matriz, idx| %>
+    <div class="divisor">
+        <h4>
+        <% if idx == @matriz.size-1 %>
+            <%= "Variáveis não básicas" %>
+        <% elsif idx == @matriz.size-2 %>
+            <%= "Variáveis básicas" %>
+        <% elsif idx == @matriz.size-3 %>
+            <%= "Sensibilidade" %>
+        <% elsif idx == @matriz.size-4 %>
+            <%= "Tabela final" %>
+        <% else %>
+            <%= "Tabela ##{idx+1}" %>
+        <% end %>
+        </h4>
+
+        <table class="table table-bordered">
+        <% matriz.each do |linha| %>
+            <tr>
+            <% linha.each_with_index do |e, i| %>
+                <% if e.class == Float %>
+                <td><%= e.round(3) %></td>
+                <% else %>
+                <td class="active"><%= e %></td>
+                <% end %>
+            <% end %>
+            </tr>
+        <% end %>
+        </table>
+    </div>
+    <%end%>
+<%end%>

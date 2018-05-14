@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <%= csrf_meta_tag %>
+
+        <title>Simplex</title>
+
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="row">
+                        <div class="page-header">
+                            <h2>
+                                Simplex
+                                <small><a href="mochila/" class="btn btn-sm btn-default" title="Algoritmo da Mochila">Algoritmo da Mochila</a></small>
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="expressao">Expressão</label>
+                                <input type="text" name="expressao" class="form-control" id="expressao" placeholder="e.g.: 3x1 + 2x2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Restrições</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <input type="text" name="restricoes[]" class="form-control input-restr" placeholder="e.g.: 5x1 + 11x2 <= 18">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-danger" disabled><i class="glyphicon glyphicon-remove"></i></button>
+                                    <button type="button" class="btn btn-success btn-restr-plus"><i class="glyphicon glyphicon-plus"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">&nbsp;</div>
+                    </div>
+
+                    <div class="more-restr"></div>
+
+                    <div class="row">
+                        <div class="col-md-12">&nbsp;</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="maxvoltas">Máx. iterações</label>
+                                <input type="number" name="maxvoltas" min="1" class="form-control" id="maxvoltas" placeholder="e.g.: 20">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-default active">
+                                    <input type="radio" checked="" autocomplete="off" name="acao" value="min"> Minimizar
+                                </label>
+                                <label class="btn btn-default">
+                                    <input type="radio" autocomplete="off" name="acao" value="max"> Maximizar
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-7">
+                            <div class="btn-group pull-right" data-toggle="buttons">
+                                <label class="btn btn-default active">
+                                    <input type="radio" checked="" autocomplete="off" name="show_all" value="no"> Resultado Final
+                                </label>
+                                <label class="btn btn-default">
+                                    <input type="radio" autocomplete="off" name="show_all" value="yes"> Passo a Passo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">&nbsp;</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn-block btn btn-primary btn-gerar" type="button">Gerar</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+
+                    <div class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="restr-model hide">
+            <div class="remove-restr">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="e.g.: 5x1 + 11x2 <= 18">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-danger btn-restr-minus"><i class="glyphicon glyphicon-remove"></i></button>
+                                <button type="button" class="btn btn-success btn-restr-plus"><i class="glyphicon glyphicon-plus"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript">
+        $(function() {
+            $(document).on('click', '.btn-restr-minus', function() {
+                var t = $(this),
+                    div_rem = t.parents('.remove-restr');
+
+                div_rem.remove();
+            });
+
+            $(document).on('click', '.btn-restr-plus', function() {
+                var model = $(jQuery.parseHTML($('.restr-model').html()));
+
+                model.find('input[type="text"]').attr('name', 'restricoes[]').addClass('input-restr');
+
+                $('.more-restr').append(model);
+            });
+
+            $('.btn-gerar').on('click', function() {
+                var acao = $('[name="acao"]:checked').val(),
+                    expr = $('[name="expressao"]').val(),
+                    maxvoltas = $('[name="maxvoltas"]').val(),
+                    restr_el = $('[name^="restricoes"]'),
+                    restr = [];
+
+                if (maxvoltas <= 0) {
+                    $('.result').html('<div class="alert alert-danger"><p><strong>Não foi possível realizar o cálculo.</strong></p><p>&nbsp;</p><p>Informe um número de iterações.</p></div>');
+
+                    return;
+                }
+
+                restr_el.each(function(i, e) {
+                    restr.push($(e).val());
+                });
+
+                $.ajax({
+                    url: '/simplex',
+                    type: 'POST',
+                    data: {
+                        acao: acao,
+                        expr: expr,
+                        restr: restr,
+                        maxvoltas: parseInt(maxvoltas)
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+                    }
+                })
+                .success(function(result) {
+                    var res = $.parseHTML(result),
+                        show_all = $('[name="show_all"]:checked').val();
+
+                    if (show_all == 'yes') {
+                        $('.result').html(res);
+                    } else {
+                        var iterator = 0,
+                            tables = res.reverse().filter(function(e) {
+                                if ($(e).hasClass('divisor') && iterator < 4) {
+                                    iterator++;
+
+                                    return $(e);
+                                }
+                            }).reverse();
+
+                        $('.result').html(tables);
+                    }
+                })
+                .fail(function(j, k, w) {
+                    $('.result').html('<div class="alert alert-danger"><p><strong>Não foi possível realizar o cálculo.</strong></p><p>&nbsp;</p><p>Lembre-se que as expressões e restrições devem estar com seus sinais separados, e.g.: <code>3x1 + 2x2</code> ou <code>5x1 + 11x2 <= 18</code>.</p></div>');
+                });
+            });
+        });
+        </script>
+    </body>
+</html>

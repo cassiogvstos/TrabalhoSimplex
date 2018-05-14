@@ -1,0 +1,40 @@
+Primeira coisa quando baixar o git é configura-lo.
+
+No terminal digite o comando abaixo:
+//configure o seu nome do git
+git config --global user.name "seunome"
+
+//configure o seu e-mail do gi
+git config --global user.email seu@email.
+
+Inicie o git com o comando:
+git init
+
+Agora o seu código está na estage área então vamos adicionar o código 
+"tirar uma foto" digite:
+git add .
+
+OBS. O git add "." serve para adicionar todos os arquivos para o estádo de
+commit. Caso queira adicionar um arquivo especifico digite:
+git add nome_do_arquivo
+
+Agora vamo comitar no arquivo isso ira informa ao git que o código já está
+pronto para enviar ao repositório remoto:
+git commit -m "coloque uma frase que identifique as alterações feitas"
+
+O comando git status servira para nos informar o status atual do que 
+estamos fazendo digite:
+git status
+
+Caso queira saber todos os commits que foram dados no seu repositório digite:
+git log
+
+####  AGORA VAMOS APRENDER A TRABALHAR COM O GITHUB ####
+
+Entre no site do github e crie uma conta
+https://github.com
+
+Obs. Cadastre o mesmo e-mail que cadastrou no git
+
+No site do github crie um novo repositório
+

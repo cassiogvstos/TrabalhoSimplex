@@ -1,0 +1,68 @@
+<div class="row">
+    <div class="col-md-12">
+        <p class="lead">O algoritmo selecionou estes itens como qualificados (ordenado por valor):</p>
+
+        <ul>
+            <% @resultado.each do |linha| %>
+                <li>Peso <strong class="text-success"><%= linha[0] %></strong> <strong>/</strong> Valor <strong class="text-success"><%= linha[1] %></strong></li>
+            <% end %>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">&nbsp;</div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p class="lead">Solução: <strong class="text-success"><%= @tabela.last.last %></strong></p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">&nbsp;</div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p class="lead">Tabela:</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <% @tabela.unshift(Array.new(@tabela.last.size) { |i| i })%>
+        <% @tabela.first.unshift("#")%>
+        <table class="table table-bordered table-condensed">
+            <% contador = -1 %>
+            <% @tabela.each_with_index do |linha, i| %>
+                <tr>
+                    <% if contador > -1 %>
+                        <td class="text-center active">
+                            <strong><%= contador.to_s %></strong>
+                        </td>
+                    <% end %>
+                    <% linha.each_with_index do |val, j| %>
+                        <% if contador == -1 %>
+                            <td class="text-center active">
+                                <strong><%= val %></strong>
+                            </td>
+                        <% else %>
+                            <% if i == @tabela.size - 1 and j == @tabela.last.size - 1  %>
+                            <td class="text-center success"><strong><%= val %></strong></td>
+                            <% else %>
+                            <td class="text-center"><%= val %></td>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                    <% contador += 1 %>
+                </tr>
+            <% end %>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">&nbsp;</div>
+</div>
